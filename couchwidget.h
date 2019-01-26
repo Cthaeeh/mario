@@ -8,7 +8,7 @@ class CouchWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit CouchWidget(QWidget *parent = 0);
+    CouchWidget(QWidget *parent = 0, int capacity = 4);
 
 
     CouchModel* model();

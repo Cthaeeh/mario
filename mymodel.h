@@ -11,17 +11,19 @@ struct Player
     int goldMedals;
     int silverMedals;
     int bronzeMedals;
+    int ironMedals;
 
     int score() const
     {
-        return 3*goldMedals + 2 * silverMedals + 1* bronzeMedals;
+        return 10*goldMedals + 8 * silverMedals + 6* bronzeMedals + 6* ironMedals;
     }
 
     Player(QString name)
         :name(name),
         goldMedals(0),
         silverMedals(0),
-        bronzeMedals(0)
+        bronzeMedals(0),
+        ironMedals(0)
     {
 
     }
@@ -35,7 +37,8 @@ public:
     enum Medal {
         Gold,
         Silver,
-        Bronze
+        Bronze,
+        Iron
     };
 
     MyModel(QObject *parent);

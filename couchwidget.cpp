@@ -3,10 +3,10 @@
 #include <QTableView>
 #include <QLabel>
 
-CouchWidget::CouchWidget(QWidget *parent)
+CouchWidget::CouchWidget(QWidget *parent, int capacity)
     : QWidget(parent),
       table_(new QTableView(this)),
-      couchModel_(new CouchModel(this))
+      couchModel_(new CouchModel(this, capacity))
 {
     auto layout = new QVBoxLayout();
     layout->addWidget(new QLabel("Couch"));
@@ -14,7 +14,7 @@ CouchWidget::CouchWidget(QWidget *parent)
 
     table_->setModel(couchModel_);
 
-    setMinimumWidth(500);
+    setMinimumWidth(600);
     setMinimumHeight(200);
     setLayout(layout);
 }

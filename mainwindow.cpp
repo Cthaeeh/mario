@@ -12,10 +12,9 @@ MainWindow::MainWindow(QWidget *parent)
       roundLabel_(new QLabel("Round 1",this)),
       table_(new QTableView(this)),
       myModel_(new MyModel(this)),
-      couches_({new CouchWidget(this),
-                new CouchWidget(this),
-                new CouchWidget(this),
-                new CouchWidget(this)})
+      couches_({new CouchWidget(this,4),
+                new CouchWidget(this,3),
+                new CouchWidget(this,3)})
 
 {
     auto layout = new QGridLayout();
@@ -68,15 +67,6 @@ void MainWindow::addPlayer()
             msgBox.exec();
         } else {
             myModel_->addPlayer(name);
-            for (auto couch : couches_) {
-                if (!couch->model()->isFull()) {
-                    couch->model()->addPlayer(name);
-                    return;
-                }
-            }
-            QMessageBox msgBox;
-            msgBox.setText("Couches are full, ask programmer to implement more couches.");
-            msgBox.exec();
         }
 
     }
@@ -88,19 +78,24 @@ void MainWindow::submit()
 
     // Update the standings
     for (auto couch : couches_) {
-        for (auto playerUpdate : couch->model()->updates()) {
-            switch(playerUpdate.second) {
+        for (auto result : couch->model()->results()) {
+            for (auto map : result.asVec()) {
+            switch(map) {
             case 1:
-                myModel_->addMedal(playerUpdate.first,MyModel::Gold);
+                myModel_->addMedal(result.name, MyModel::Gold);
                 break;
             case 2:
-                myModel_->addMedal(playerUpdate.first,MyModel::Silver);
+                myModel_->addMedal(result.name, MyModel::Silver);
                 break;
             case 3:
-                myModel_->addMedal(playerUpdate.first,MyModel::Bronze);
+                myModel_->addMedal(result.name, MyModel::Bronze);
+                break;
+            case 4:
+                myModel_->addMedal(result.name, MyModel::Iron);
                 break;
             default:
                 break;
+            }
             }
         }
     }

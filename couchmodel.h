@@ -5,12 +5,26 @@
 #include <vector>
 #include <QString>
 
+struct Result
+{
+    QString name;
+    int placeRound1;
+    int placeRound2;
+    int placeRound3;
+    int placeRound4;
+
+    std::vector<int> asVec()
+    {
+        return {placeRound1,placeRound2,placeRound3,placeRound4};
+    }
+};
+
 
 class CouchModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:
-    CouchModel(QObject *parent);
+    CouchModel(QObject *parent, int capacity);
 
     int rowCount(const QModelIndex &parent) const override;
     int columnCount(const QModelIndex &parent) const override;
@@ -21,18 +35,18 @@ public:
 
     Qt::ItemFlags flags(const QModelIndex & index) const override;
 
-
     bool isFull();
 
     void addPlayer (const QString name);
 
     void clear ();
 
-    std::vector<std::pair<QString ,int>> updates();
+    std::vector<Result> results();
 
 private:
 
-    std::vector<std::pair<QString ,int>> playerUpdates_;
+    std::vector<Result> results_;
+    int capacity_;
 
 };
 

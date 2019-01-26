@@ -1,8 +1,9 @@
 #include "couchmodel.h"
 #include <iostream>
 
-CouchModel::CouchModel(QObject *parent)
-    :QAbstractTableModel(parent)
+CouchModel::CouchModel(QObject *parent, int capacity)
+    :QAbstractTableModel(parent),
+     capacity_(capacity)
 {
 
 }
@@ -10,12 +11,12 @@ CouchModel::CouchModel(QObject *parent)
 
 int CouchModel::rowCount(const QModelIndex &parent) const
 {
-    return 4;
+    return capacity_;
 }
 
 int CouchModel::columnCount(const QModelIndex &parent) const
 {
-    return 2;
+    return 5;
 }
 
 QVariant CouchModel::data (const QModelIndex &index, int role) const
@@ -23,9 +24,15 @@ QVariant CouchModel::data (const QModelIndex &index, int role) const
     if (role == Qt::DisplayRole) {
         switch(index.column()) {
         case 0:
-            return index.row() < playerUpdates_.size() ? playerUpdates_.at(index.row()).first : QString();
+            return index.row() < results_.size() ? results_.at(index.row()).name : QString();
         case 1:
-            return index.row() < playerUpdates_.size() ? playerUpdates_.at(index.row()).second : -1;
+            return index.row() < results_.size() ? results_.at(index.row()).placeRound1 : -1;
+        case 2:
+            return index.row() < results_.size() ? results_.at(index.row()).placeRound2 : -1;
+        case 3:
+            return index.row() < results_.size() ? results_.at(index.row()).placeRound3 : -1;
+        case 4:
+            return index.row() < results_.size() ? results_.at(index.row()).placeRound4 : -1;
         default:
             return QVariant();
         }
@@ -43,7 +50,13 @@ QVariant CouchModel::headerData (int section, Qt::Orientation orientation, int r
                 case 0:
                     return QString("Name");
                 case 1:
-                    return QString("place:");
+                    return QString("map 1:");
+                case 2:
+                    return QString("map 2:");
+                case 3:
+                    return QString("map 3:");
+                case 4:
+                    return QString("map 4:");
                 }
             }
             if (orientation == Qt::Vertical) {
@@ -67,16 +80,30 @@ bool CouchModel::setData(const QModelIndex & i, const QVariant & value, int role
 {
     if (role == Qt::EditRole)
     {
-        if (i.column() == 1 && i.row() < playerUpdates_.size()) {
+        if (i.column() >= 1 && i.column() <= 4 && i.row() < results_.size()) {
             std::cout << "try" << std::endl;
             try {
                 int place = value.toInt();
                 if (place < 0 || place > 4)
                     return false;
-                playerUpdates_.at(i.row()).second = place;
+                switch (i.column()) {
+                case 1:
+                 results_.at(i.row()).placeRound1 = place;
+                    break;
+                case 2:
+                 results_.at(i.row()).placeRound2 = place;
+                 break;
+                case 3:
+                 results_.at(i.row()).placeRound3 = place;
+                 break;
+                case 4:
+                 results_.at(i.row()).placeRound4 = place;
+                 break;
+                }
+
 
                 auto topLeft = index(0,0);
-                auto bottomRight = index(playerUpdates_.size(),2);
+                auto bottomRight = index(results_.size(),5);
 
                 emit dataChanged(topLeft, bottomRight);
                 return true;
@@ -90,7 +117,7 @@ bool CouchModel::setData(const QModelIndex & i, const QVariant & value, int role
 
 Qt::ItemFlags CouchModel::flags(const QModelIndex & index) const
 {
-    if (index.column() == 1)
+    if (index.column() >= 1 || index.column() <=4)
         return Qt::ItemIsEditable | QAbstractTableModel::flags(index);
     else
         return QAbstractTableModel::flags(index);;
@@ -99,20 +126,20 @@ Qt::ItemFlags CouchModel::flags(const QModelIndex & index) const
 void CouchModel::addPlayer (const QString name)
 {
     if (!isFull())
-        playerUpdates_.push_back({name,0});
+        results_.push_back({name,0,0,0,0});
     emit layoutChanged();
 }
 
 void CouchModel::clear ()
 {
-    playerUpdates_.clear();
+    results_.clear();
 }
 
 bool CouchModel::isFull() {
-    return playerUpdates_.size() >= 4;
+    return results_.size() >= capacity_;
 }
 
-std::vector<std::pair<QString ,int>> CouchModel::updates()
+std::vector<Result> CouchModel::results()
 {
-    return playerUpdates_;
+    return results_;
 }

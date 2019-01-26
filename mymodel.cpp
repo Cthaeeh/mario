@@ -16,7 +16,7 @@ int MyModel::rowCount(const QModelIndex &parent) const
 
 int MyModel::columnCount(const QModelIndex &parent) const
 {
-    return 5;
+    return 6;
 }
 
 QVariant MyModel::data (const QModelIndex &index, int role) const
@@ -33,11 +33,14 @@ QVariant MyModel::data (const QModelIndex &index, int role) const
         case 3:
             return players_.at(index.row()).bronzeMedals;
         case 4:
+            return players_.at(index.row()).ironMedals;
+        case 5:
             return players_.at(index.row()).score();
         default:
             return QVariant();
         }
     }
+    return QVariant();
 }
 
 QVariant MyModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -56,8 +59,13 @@ QVariant MyModel::headerData(int section, Qt::Orientation orientation, int role)
                 case 3:
                     return QString("bronze");
                 case 4:
-                    return QString("score");
+                    return QString("iron");
+                case 5:
+                    return QString("iron");
                 }
+            }
+            if (orientation == Qt::Vertical) {
+                return QString(section);
             }
         }
         return QVariant();
@@ -98,6 +106,9 @@ void MyModel::addMedal (const QString &name, Medal medal)
             case Bronze:
                 player.bronzeMedals++;
                 break;
+            case Iron:
+                player.ironMedals++;
+                break;
             }
         }
     }
@@ -106,7 +117,11 @@ void MyModel::addMedal (const QString &name, Medal medal)
 
 bool is_better(const Player& a, const Player& b)
 {
-    return a.score() > b.score();
+    //TODO implement special gold rule.
+    if (a.score() == b.score())
+        return a.goldMedals > b.goldMedals;
+    else
+        return a.score() > b.score();
 }
 
 std::vector<QString> MyModel::getPlayersSorted()
