@@ -15,7 +15,7 @@ struct Player
 
     int score() const
     {
-        return 10*goldMedals + 8 * silverMedals + 6* bronzeMedals + 6* ironMedals;
+        return 10*goldMedals + 8 * silverMedals + 6* bronzeMedals + 5* ironMedals;
     }
 
     Player(QString name)
