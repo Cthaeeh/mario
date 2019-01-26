@@ -97,7 +97,7 @@ void MyModel::addMedal (const QString &name, Medal medal)
 
 bool is_better(const Player& a, const Player& b)
 {
-    return a.score() < b.score();
+    return a.score() > b.score();
 }
 
 std::vector<QString> MyModel::getPlayersSorted()

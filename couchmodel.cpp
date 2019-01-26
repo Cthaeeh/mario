@@ -30,6 +30,7 @@ QVariant CouchModel::data (const QModelIndex &index, int role) const
             return QVariant();
         }
     }
+    return QVariant();
 }
 
 QVariant CouchModel::headerData (int section, Qt::Orientation orientation, int role) const
@@ -62,16 +63,22 @@ QVariant CouchModel::headerData (int section, Qt::Orientation orientation, int r
         return QVariant();
 }
 
-bool CouchModel::setData(const QModelIndex & index, const QVariant & value, int role)
+bool CouchModel::setData(const QModelIndex & i, const QVariant & value, int role)
 {
     if (role == Qt::EditRole)
     {
-        if (index.column() == 1 && index.row() < playerUpdates_.size()) {
+        if (i.column() == 1 && i.row() < playerUpdates_.size()) {
+            std::cout << "try" << std::endl;
             try {
                 int place = value.toInt();
                 if (place < 0 || place > 4)
                     return false;
-                playerUpdates_.at(index.row()).second = place;
+                playerUpdates_.at(i.row()).second = place;
+
+                auto topLeft = index(0,0);
+                auto bottomRight = index(playerUpdates_.size(),2);
+
+                emit dataChanged(topLeft, bottomRight);
                 return true;
             } catch(...) {
                 return false;
