@@ -75,6 +75,15 @@ void MyModel::addPlayer (const QString &name)
     emit layoutChanged();
 }
 
+bool MyModel::playerExists (const QString &name)
+{
+    for (auto &player : players_) {
+        if (player.name == name)
+            return true;
+    }
+    return false;
+}
+
 void MyModel::addMedal (const QString &name, Medal medal)
 {
     for (auto &player : players_) {

@@ -3,6 +3,7 @@
 #include <QWidget>
 #include <QInputDialog>
 #include <iostream>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
@@ -61,13 +62,23 @@ void MainWindow::addPlayer()
     QString name = QInputDialog::getText(this, "Add Player","Insert Player name",QLineEdit::Normal,"asdf",&ok);
     if (ok && !name.isEmpty()) {
         // TODO ensure player does not already exist ..
-        myModel_->addPlayer(name);
-        for (auto couch : couches_) {
-            if (!couch->model()->isFull()) {
-                couch->model()->addPlayer(name);
-                break;
+        if (myModel_->playerExists(name)) {
+            QMessageBox msgBox;
+            msgBox.setText("Player exists already");
+            msgBox.exec();
+        } else {
+            myModel_->addPlayer(name);
+            for (auto couch : couches_) {
+                if (!couch->model()->isFull()) {
+                    couch->model()->addPlayer(name);
+                    return;
+                }
             }
+            QMessageBox msgBox;
+            msgBox.setText("Couches are full, ask programmer to implement more couches.");
+            msgBox.exec();
         }
+
     }
 }
 

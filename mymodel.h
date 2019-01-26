@@ -47,6 +47,8 @@ public:
 
     void addPlayer (const QString &name);
 
+    bool playerExists (const QString &name);
+
     void addMedal (const QString &name, Medal medal);
 
     std::vector<QString> getPlayersSorted();
